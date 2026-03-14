@@ -1,34 +1,33 @@
-2026-03-14 12:57:49 UTC
+2026-03-14 13:04:09 UTC
 Windows-10-10.0.19045-SP0
 Ren'Py 8.5.2.26010301
 
-Early init took 50 ms
-Loading error handling took 21 ms
-Loading script took 192 ms
+Early init took 48 ms
+Loading error handling took 22 ms
+Loading script took 100 ms
 Loading save slot metadata took 30 ms
 Loading persistent took 0 ms
-Running init code took 42 ms
-Loading analysis data took 4 ms
+Running init code took 43 ms
+Loading analysis data took 3 ms
 Analyze and compile ATL took 1 ms
-Reloading save slot metadata took 17 ms
-Backing up script files to 'C:\\Users\\venya\\AppData\\Roaming/RenPy/backups\\Logica DE test_build':
-Dump and make backups took 46 ms
+Reloading save slot metadata took 16 ms
+Dump and make backups took 37 ms
 Cleaning cache took 0 ms
 Making clean stores took 0 ms
-Initial gc took 48 ms
+Initial gc took 44 ms
 DPI scale factor: 1.000000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object took 342 ms
+Creating interface object took 330 ms
 Init translation took 0 ms
-Cleaning stores took 1 ms
-Load screen analysis took 0 ms
-Analyze screens took 9 ms
-Save screen analysis took 11 ms
-Save pyanalysis took 4 ms
-Save bytecode took 23 ms
-Running _start took 1 ms
-Interface start took 278 ms
+Cleaning stores took 0 ms
+Load screen analysis took 19 ms
+Analyze screens took 1 ms
+Save screen analysis took 0 ms
+Save pyanalysis took 0 ms
+Save bytecode took 0 ms
+Running _start took 0 ms
+Interface start took 273 ms
 
 Initializing gl2 renderer:
 primary display bounds: (0, 0, 1920, 1080)
@@ -42,7 +41,3 @@ Screen sizes: virtual=(1920, 1080) physical=(1920, 1017) drawable=(1920, 1017)
 Maximum texture size: 4096x4096
 Screen sizes: virtual=(1920, 1080) physical=(1920, 1017) drawable=(1920, 1017)
 Maximum texture size: 4096x4096
-Cleaning stores took 1 ms
-Load screen analysis took 18 ms
-Analyze screens took 0 ms
-Running _start took 0 ms
