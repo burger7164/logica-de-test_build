@@ -414,7 +414,7 @@ screen main_menu():
 
 
         if main_menu:
-            imagebutton auto "gui/main_menu/buttons/gallery_%s.png" xpos 820 ypos 569 focus_mask True action ShowMenu("galleryA")
+            imagebutton auto "gui/main_menu/buttons/gallery_%s.png" xpos 820 ypos 569 focus_mask True action Start(label='freemode')
 
         if _in_replay:
 

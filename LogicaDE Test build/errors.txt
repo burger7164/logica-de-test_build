@@ -1,0 +1,10 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/script.rpy", line 110: expected 'except' or 'finally' block
+    return levels
+        ^^^^^^
+
+Ren'Py Version: Ren'Py 8.5.2.26010301
+Thu Mar  5 18:56:38 2026

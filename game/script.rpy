@@ -444,3 +444,20 @@ label level_generic:
     
     call screen level_selection
     return
+
+label freemode():
+    v"Вы находитесь в открытом режиме, здесь вам доступны все задачи из банка игры.."
+    menu:
+        "Продолжить?"
+
+        "Да":
+            jump freemode_main
+
+        "Выйти в меню":
+            scene black with dissolve
+            stop music
+            "Загрузка..."
+            return    
+        
+label freemode_main():
+    stop music

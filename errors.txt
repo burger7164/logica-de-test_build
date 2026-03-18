@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/script.rpy", line 110: expected 'except' or 'finally' block
-    return levels
-        ^^^^^^
+File "game/script.rpy", line 543: 'xmargin' is not a keyword argument or valid child of the hbox statement.
+    xmargin 20
+           ^
 
 Ren'Py Version: Ren'Py 8.5.2.26010301
-Thu Mar  5 18:56:38 2026
+Wed Mar 18 18:23:08 2026
