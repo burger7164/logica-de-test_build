@@ -1,0 +1,29 @@
+2026-03-24 16:44:28 UTC
+Windows-10-10.0.19045-SP0
+Ren'Py 8.5.2.26010301
+
+Early init took 49 ms
+Loading error handling took 157 ms
+Loading script took 1555 ms
+Loading save slot metadata took 30 ms
+Loading persistent took 0 ms
+Running init code took 118 ms
+Loading analysis data took 0 ms
+Analyze and compile ATL took 4 ms
+Reloading save slot metadata took 16 ms
+Backing up script files to 'C:\\Users\\venya\\AppData\\Roaming/RenPy/backups\\Logica DE test_build':
+Dump and make backups took 40 ms
+Cleaning cache took 0 ms
+Making clean stores took 0 ms
+Initial gc took 51 ms
+DPI scale factor: 1.000000
+nvdrs: Loaded, about to disable thread optimizations.
+nvdrs: Disabled thread optimizations.
+Creating interface object took 376 ms
+Init translation took 1 ms
+Cleaning stores took 0 ms
+Load screen analysis took 0 ms
+Analyze screens took 26 ms
+Save screen analysis took 12 ms
+Save pyanalysis took 4 ms
+Save bytecode took 29 ms

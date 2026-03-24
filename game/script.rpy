@@ -56,8 +56,65 @@ default max_hints = 3
 default last_rest_level = 0
 default current_level = 1
 default hints_pool = []
+default freemode_data = {}
+default freemode_completed = {}
+default current_freemode_level = 1
 
 init python:
+    def freemode_levels():
+        nya_levels = {}
+        try:
+            with renpy.file("freemode.txt") as f:
+                for line in f:
+                    line = line.decode('utf-8').strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    
+                    parts = line.split("|")
+                    if len(parts) >= 6:
+                        level_num = int(parts[0])
+                        difficulty = parts[1]
+                        level_name = parts[2]
+                        level_task = parts[3]
+                        level_answer = parts[4].lower()
+                        level_hint = parts[5]
+                        
+                        nya_levels[level_num] = {
+                            "number": level_num,
+                            "difficulty": difficulty,
+                            "name": level_name,
+                            "task": level_task,
+                            "answer": level_answer,
+                            "hint": level_hint,
+                            "completed": False
+                        }
+        except:
+            for i in range(1, 101):
+                if i <= 40:
+                    diff = "e"
+                    name = f"Номер {i}"
+                    task = f"Задача уровня {i} (легкая)"
+                elif i <= 80:
+                    diff = "m"
+                    name = f"Номер {i}"
+                    task = f"Задача уровня {i} (средняя)"
+                else:
+                    diff = "h"
+                    name = f"Номер {i}"
+                    task = f"Задача уровня {i} (сложная)"
+                
+                nya_levels[i] = {
+                    "number": i,
+                    "difficulty": diff,
+                    "name": name,
+                    "task": task,
+                    "answer": str(i),
+                    "hint": f"Подсказка для задачи {i}",
+                    "completed": False
+                }
+        
+        return nya_levels
+    
     def load_hints_from_file():
         hints = []
         try:
@@ -184,6 +241,11 @@ init python:
         
         if store.unlocked_levels < store.completed_levels + 1 and store.unlocked_levels < 25:
             store.unlocked_levels = min(store.completed_levels + 1, 25)
+    
+    def update_freemode_progress(level_num):
+        if level_num in freemode_data:
+            freemode_data[level_num]["completed"] = True
+            store.freemode_completed[level_num] = True
 
 label start:
     play music "menu.mp3"
@@ -269,7 +331,6 @@ label explore:
             play sound "door.wav"
             scene black with dissolve
             jump win
-
 
 label check_map:
     play sound "rolling_paper.wav"
@@ -461,21 +522,134 @@ label win():
     "Спасибо за игру <3"
     return
 
-
 label freemode():
+    $ freemode_data = freemode_levels()
+    $ freemode_completed = {num: False for num in freemode_data.keys()}
     v"Вы находитесь в свободном режиме, здесь вам доступны все задачи из банка игры.."
     menu:
         "Продолжить?"
-
         "Да":
             jump freemode_main
-
         "Выйти в меню":
             scene black with dissolve
             stop music
-            "Загрузка..."
-            return    
+            return
+
+screen scrollable_page():
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xpadding 50
+        ypadding 30
+        xminimum 900
+        ymaximum 700
         
+        viewport:
+            scrollbars "vertical"
+            mousewheel True
+            draggable True
+            side_yfill True
+            
+            vbox:
+                spacing 10
+                xfill True
+                
+                text "----------" xalign 0.5
+                text "--- Свободный режим ---" size 40 xalign 0.5
+                text "----------" xalign 0.5
+                null height 20
+                
+                for i in range(1, 101):
+                    $ task_info = freemode_data.get(i)
+                    if task_info:
+                        $ is_done = freemode_completed.get(i, False)
+                        
+                        if is_done:
+                            button:
+                                xfill True
+                                background Solid("#2a5a2a")
+                                hover_background Solid("#3a7a3a")
+                                action [SetVariable("current_freemode_level", i), Jump("freemode_level")]
+                                hbox:
+                                    xalign 0.5
+                                    spacing 30
+                                    text f"Задача {i}" size 28 color "#CCFFCC"
+                                    text "✓" size 28 color "#00FF00"
+                                    text f"[task_info['name']]" size 24 color "#CCFFCC"
+                        else:
+                            button:
+                                xfill True
+                                background Solid("#3a2a1a")
+                                hover_background Solid("#5a3a2a")
+                                action [SetVariable("current_freemode_level", i), Jump("freemode_level")]
+                                hbox:
+                                    xalign 0.5
+                                    spacing 30
+                                    text f"Задача {i}" size 28 color "#FFFFFF"
+                                    text f"[task_info['name']]" size 24 color "#DDDDDD"
+                    else:
+                        button:
+                            xfill True
+                            background Solid("#444444")
+                            action NullAction()
+                            text f"Задача {i} (недоступна)" size 24 color "#888888" xalign 0.5
+                
+                text "----------" xalign 0.5
+                null height 20
+                
+                textbutton ">:)" action Jump("explore") xalign 0.5
+
+label freemode_level():
+    $ level_num = current_freemode_level
+    $ level_info = freemode_data.get(level_num)
+    
+    if not level_info:
+        "Задача не найдена."
+        jump freemode_main
+    
+    $ diff_color = get_difficulty_color(level_info['difficulty'])
+    
+    scene bg map with dissolve
+    
+    "=== Свободный режим: [level_info['name']] ==="
+    "Сложность: [level_info['difficulty'].upper()]"
+    ""
+    "[level_info['task']]"
+    ""
+    
+    menu:
+        "Ваш ответ:":
+            $ user_answer = renpy.input("Введите ответ:", length=50).strip()
+            
+            if user_answer:
+                if check_answer(user_answer, level_info['answer']):
+                    "Верно! Задача решена!"
+                    $ update_freemode_progress(level_num)
+                    if level_num < 100:
+                        $ next_level = level_num + 1
+                        menu:
+                            "Перейти к следующей задаче?"
+                            "Да, следующую":
+                                $ current_freemode_level = next_level
+                                jump freemode_level
+                            "Вернуться к списку":
+                                jump freemode_main
+                    else:
+                        "Поздравляем! Вы решили последнюю задачу в свободном режиме!"
+                        jump freemode_main
+                else:
+                    "Неверный ответ. Попробуйте еще раз или вернитесь к списку."
+                    menu:
+                        "Что дальше?"
+                        "Попробовать снова":
+                            jump freemode_level
+                        "Вернуться к списку задач":
+                            jump freemode_main
+            else:
+                "Вы не ввели ответ."
+                jump freemode_level
+
 label freemode_main():
     stop music
     scene bg map with dissolve
+    call screen scrollable_page

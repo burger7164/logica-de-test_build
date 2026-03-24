@@ -1,2 +1,2 @@
 # LogicaDE Test build
-unstable versiobs
+unstable versions
