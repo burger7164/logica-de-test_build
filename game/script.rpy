@@ -264,6 +264,12 @@ label explore:
             "Вы отдыхаете и восстанавливаете силы..."
             "Лимит подсказок обновлен: теперь доступно [max_hints] подсказок."
             jump explore
+        
+        "Проверить выход" if completed_levels == 25:
+            play sound "door.wav"
+            scene black with dissolve
+            jump win
+
 
 label check_map:
     play sound "rolling_paper.wav"
@@ -402,7 +408,6 @@ label level_generic:
     
     "=== [level_info['name']] ==="
     "Сложность: [diff_text]"
-    "Использовано подсказок: [hints_used]/[max_hints]"
     "Кто знает, сколько ещё вы протянете..."
     ""
     
@@ -445,8 +450,20 @@ label level_generic:
     call screen level_selection
     return
 
+label win():
+    scene bg castle with dissolve
+    "Дверь поддаётся, и вам наконец-то удаётся выбраться"
+    "Подземелье остаётся где-то позади.."
+    v"Поздравляю.. "
+    v"Не многим удавалось пережить то, через что вы прошли"
+    v"До скорых встреч... =)"
+    scene black with dissolve
+    "Спасибо за игру <3"
+    return
+
+
 label freemode():
-    v"Вы находитесь в открытом режиме, здесь вам доступны все задачи из банка игры.."
+    v"Вы находитесь в свободном режиме, здесь вам доступны все задачи из банка игры.."
     menu:
         "Продолжить?"
 
@@ -461,3 +478,4 @@ label freemode():
         
 label freemode_main():
     stop music
+    scene bg map with dissolve

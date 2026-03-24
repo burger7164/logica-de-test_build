@@ -1,10 +1,1 @@
-﻿I'm sorry, but errors were detected in your script. Please correct the
-errors listed below, and try again.
-
-
-File "game/script.rpy", line 543: 'xmargin' is not a keyword argument or valid child of the hbox statement.
-    xmargin 20
-           ^
-
-Ren'Py Version: Ren'Py 8.5.2.26010301
-Wed Mar 18 18:23:08 2026
+﻿
