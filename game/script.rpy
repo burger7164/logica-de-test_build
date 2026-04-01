@@ -62,7 +62,7 @@ default current_freemode_level = 1
 
 init python:
     def freemode_levels():
-        nya_levels = {}
+        nya_levels = {} # :3
         try:
             with renpy.file("freemode.txt") as f:
                 for line in f:
@@ -282,14 +282,15 @@ label new_page:
     play music "tutorial.mp3"
     scene bg map with dissolve
     
-    v "Добро пожаловать на карту."
+    v "Добро пожаловать =)"
     v "Ваше приключение начнётся прямо..."
     
-    "Что дальше?"
+    y"Что дальше?"
     
     menu:
         "пропустить обучение":
             scene black with dissolve
+            stop music
             "Что ж, удачи =)"
             v "...сейчас!"
             scene bg dungeon with dissolve
@@ -299,17 +300,17 @@ label new_page:
             jump check_map
 
 label explore:
-    play sound "dungeon.wav"
+    play music "dungeon.mp3"
     scene bg dungeon with dissolve
     
     python:
         if not levels_data:
             levels_data = load_levels_from_file()
     
-    "Перед вами появляется магический свиток с картой подземелья..."
+    "По центру зала в воздухе висит скрижаль с текстом, похоже на схему лабиринта.."
     
     menu:
-        "Что делать?"
+        y"Что делать?"
         
         "Посмотреть карту подземелья":
             call screen level_selection
@@ -324,10 +325,15 @@ label explore:
             $ hints_used = 0
             $ max_hints = renpy.random.randint(1, 3)
             "Вы отдыхаете и восстанавливаете силы..."
-            "Лимит подсказок обновлен: теперь доступно [max_hints] подсказок."
+            "Лимит подсказок обновлен: теперь доступно #####..."
+            "Вы слышите только шипение.."
             jump explore
         
-        "Проверить выход" if completed_levels == 25:
+        "???" if completed_levels == 25:
+            y"Странно, раньше этой двери тут не было..."
+            stop music fadeout 1.0
+            "Странное чувство переполняет вас"
+            "Вы решаетесь открыть дверь"
             play sound "door.wav"
             scene black with dissolve
             jump win
@@ -337,15 +343,17 @@ label check_map:
     scene bg map with dissolve
     "Logica - игра, в которой вам придётся проявить немалую смекалку чтобы выбраться из подземелья."
     play sound "page_turn.wav"
-    "Каждая комната - загадка.."
+    "Каждая комната - новая загадка.."
     play sound "page_turn.wav"
     "Для прохождения нужно разгадать их все."
     play sound "page_turn.wav"
-    "Если решение не получается, то вы можете воспользоваться подсказкой."
+    "Если решить всё никак не получается, то вы можете воспользоваться подсказкой."
     play sound "page_turn.wav"
     "Но будьте осторожны, использование подсказок вытягивает из вас силы.."
     play sound "page_turn.wav"
     "Никто не знает, какой раз станет последним.."
+    play sound "page_turn.wav"
+    "Не забывайте делать сохранения, это важно))"
     play sound "rolling_paper.wav"
     scene black with dissolve
     menu:
@@ -488,7 +496,7 @@ label level_generic:
                     "Неверно. Попробуйте еще раз или используйте подсказку."
                     jump level_generic
             else:
-                "Вы не дали ответа."
+                "Скрижали что-то не нравится, попробуйте ответить ;)"
                 jump level_generic
             
         "Использовать подсказку":
@@ -505,22 +513,24 @@ label level_generic:
                     "[level_info['hint']]"
                 jump level_generic
         
-        "Вернуться к карте":
-            "Вы возвращаетесь к карте подземелья."
+        "Вернуться":
+            "Вы возвращаетесь в начальную комнату.."
     
     call screen level_selection
     return
 
 label win():
-    scene bg castle with dissolve
+    play sound "door.wav"
     "Дверь поддаётся, и вам наконец-то удаётся выбраться"
+    scene bg castle with dissolve
     "Подземелье остаётся где-то позади.."
     v"Поздравляю.. "
     v"Не многим удавалось пережить то, через что вы прошли"
-    v"До скорых встреч... =)"
+    v"До скорых встреч..."
+    v"=)"
     scene black with dissolve
     "Спасибо за игру <3"
-    return
+    call screen thx
 
 label freemode():
     $ freemode_data = freemode_levels()
@@ -599,6 +609,16 @@ screen scrollable_page():
                 
                 textbutton ">:)" action Jump("explore") xalign 0.5
 
+screen thx():
+    
+    text "Отдельная благодарность:" size 55 color "#ffffff" xalign 0.5 yalign 0.1
+    text "\n-{a=https://t.me/nadinnart}NadyaArt{/a} " size 40 color "#ffffff" xalign 0.5 yalign 0.2
+    text "Работа со стилизацией, создание логотипа и концепт-артов :3" size 30 color "#ffffff" xalign 0.5 yalign 0.2
+    text "\n-{a=https://t.me/@DenisVasilyev}Денис Васильев{/a}" size 40 color "#ffffff" xalign 0.5 yalign 0.3
+    text "Наш ментор! Помощь в разработке, консультации и многое другое" size 30 color "#ffffff" xalign 0.5 yalign 0.3
+    text "\n-{a=https://t.me/@DenisVasilyev}Денис Васильев{/a}" size 40 color "#ffffff" xalign 0.5 yalign 0.4
+    text "Наш ментор! Помощь в разработке, консультации и многое другое" size 30 color "#ffffff" xalign 0.5 yalign 0.4
+    
 label freemode_level():
     $ level_num = current_freemode_level
     $ level_info = freemode_data.get(level_num)
@@ -618,7 +638,7 @@ label freemode_level():
     ""
     
     menu:
-        "Ваш ответ:":
+        "Ввести ответ":
             $ user_answer = renpy.input("Введите ответ:", length=50).strip()
             
             if user_answer:
@@ -648,6 +668,12 @@ label freemode_level():
             else:
                 "Вы не ввели ответ."
                 jump freemode_level
+
+        "Повторить условие":
+            jump freemode_level
+
+        "К списку задач":
+            jump freemode_main
 
 label freemode_main():
     stop music
