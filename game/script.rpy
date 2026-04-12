@@ -145,8 +145,8 @@ init python:
                     parts = line.split("|")
                     if len(parts) >= 6:
                         level_num = int(parts[0])
-                        difficulty = parts[1]
-                        level_name = parts[2]
+                        difficulty = parts[2]
+                        level_name = parts[1]
                         level_task = parts[3]
                         level_answer = parts[4].lower()
                         level_hint = parts[5]
@@ -317,7 +317,9 @@ label explore:
             
         "Осмотреться вокруг":
             "Вы находитесь в стартовой комнате подземелья..."
-            "Перед вами несколько дверей, ведущих в разные части лабиринта."
+            "Вокруг несколько заваленых проходов"
+            "В воздухе левитирует скрижаль"
+            "От неё доносится странное гудение"
             jump explore
         
         "Отдохнуть" if completed_levels - last_rest_level >= 5 or (completed_levels == 0 and last_rest_level == 0):
@@ -343,7 +345,7 @@ label check_map:
     scene bg map with dissolve
     "Logica - игра, в которой вам придётся проявить немалую смекалку чтобы выбраться из подземелья."
     play sound "page_turn.wav"
-    "Каждая комната - новая загадка.."
+    "В режиме истории представлено 25 уровней, в свободном - 100"
     play sound "page_turn.wav"
     "Для прохождения нужно разгадать их все."
     play sound "page_turn.wav"
@@ -506,7 +508,7 @@ label level_generic:
                 jump game_over_hints
             else:
                 $ hints_used += 1
-                if hints_pool:
+                if level_info['hint'] == "":
                     $ hint_text = random.choice(hints_pool)
                     "[hint_text]"
                 else:
@@ -528,14 +530,18 @@ label win():
     v"Не многим удавалось пережить то, через что вы прошли"
     v"До скорых встреч..."
     v"=)"
-    scene black with dissolve
-    "Спасибо за игру <3"
+    scene title with dissolve
     call screen thx
+
+label thxs():
+    scene sillycat with dissolve
+    "Спасибо за игру <3"
+    return
 
 label freemode():
     $ freemode_data = freemode_levels()
     $ freemode_completed = {num: False for num in freemode_data.keys()}
-    v"Вы находитесь в свободном режиме, здесь вам доступны все задачи из банка игры.."
+    "Вы находитесь в свободном режиме, здесь вам доступны все задачи из банка игры.."
     menu:
         "Продолжить?"
         "Да":
@@ -607,17 +613,22 @@ screen scrollable_page():
                 text "----------" xalign 0.5
                 null height 20
                 
-                textbutton ">:)" action Jump("explore") xalign 0.5
+                textbutton ">:)" action Jump("thxs") xalign 0.5
 
 screen thx():
     
-    text "Отдельная благодарность:" size 55 color "#ffffff" xalign 0.5 yalign 0.1
-    text "\n-{a=https://t.me/nadinnart}NadyaArt{/a} " size 40 color "#ffffff" xalign 0.5 yalign 0.2
-    text "Работа со стилизацией, создание логотипа и концепт-артов :3" size 30 color "#ffffff" xalign 0.5 yalign 0.2
-    text "\n-{a=https://t.me/@DenisVasilyev}Денис Васильев{/a}" size 40 color "#ffffff" xalign 0.5 yalign 0.3
-    text "Наш ментор! Помощь в разработке, консультации и многое другое" size 30 color "#ffffff" xalign 0.5 yalign 0.3
-    text "\n-{a=https://t.me/@DenisVasilyev}Денис Васильев{/a}" size 40 color "#ffffff" xalign 0.5 yalign 0.4
-    text "Наш ментор! Помощь в разработке, консультации и многое другое" size 30 color "#ffffff" xalign 0.5 yalign 0.4
+    text "{b}Отдельная благодарность:{/b}" outlines [ (2, "#000000", 0, 0) ] size 70 color "#c49227" xalign 0.5 yalign 0.1
+    text "\n-{a=https://t.me/nadinnart}NadyaArt{/a} " outlines [ (2, "#000000", 0, 0) ] size 45 color "#c49227" xalign 0.5 yalign 0.2
+    text "{b}Работа со стилизацией, создание логотипа и концепт-артов :3{/b}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5 yalign 0.2
+    text "\n-{a=https://t.me/DenisVasilyev}Денис Васильев{/a}" outlines [ (2, "#000000", 0, 0) ] size 45 color "#c49227" xalign 0.5 yalign 0.31
+    text "{b}Наш ментор! Помощь в разработке, консультации и многое другое{/b}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5 yalign 0.3
+    text "\n-{a=https://skolaztika.itch.io/}Skolaztika{/a}" outlines [ (2, "#000000", 0, 0) ] size 45 color "#c49227" xalign 0.5 yalign 0.42
+    text "{b}Создатель оригинального интерфейса (Fantasy GUI template на itch.io){/b}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5 yalign 0.4
+    text "\n-{a=https://t.me/SAMesch}Сергей Мещеряков{/a}" outlines [ (2, "#000000", 0, 0) ] size 45 color "#c49227" xalign 0.5 yalign 0.53
+    text "{b}Наш клаcсный руководитель! Организация тестирования проекта{/b}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5 yalign 0.5
+    text "{b}А также многие другие!! Загляните в раздел About =){/b}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5 yalign 0.61
+    text "\n{a=https://github.com/burger7164/LogicaDE}Репозиторий проекта{/a}" outlines [ (3, "#000000", 0, 0) ] size 45 color "#c49227" xalign 0.5 yalign 0.77
+    text "\n{a=jump:thxs}Выйти в главное меню{/a}" outlines [ (3, "#000000", 0, 0) ] size 45 color "#c49227" xalign 0.5 yalign 0.87
     
 label freemode_level():
     $ level_num = current_freemode_level
@@ -655,7 +666,7 @@ label freemode_level():
                             "Вернуться к списку":
                                 jump freemode_main
                     else:
-                        "Поздравляем! Вы решили последнюю задачу в свободном режиме!"
+                        "Поздравляю! Вы решили последнюю задачу в свободном режиме!"
                         jump freemode_main
                 else:
                     "Неверный ответ. Попробуйте еще раз или вернитесь к списку."
@@ -668,6 +679,20 @@ label freemode_level():
             else:
                 "Вы не ввели ответ."
                 jump freemode_level
+
+        "Подсказку мне срочно!!!!":
+            if level_info['hint'] == "":
+                "Ну тут можно и без подсказки решить.."
+                "Нет!"
+                "Нет!!"
+                "Нет!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                "Да не лень мне все их писать было -_-"
+                "Это всё deepseek :c"
+                "всё, сами думайте"
+                jump freemode_level
+            else:
+                "[level_info['hint']]"
+            jump freemode_level
 
         "Повторить условие":
             jump freemode_level
