@@ -145,8 +145,8 @@ init python:
                     parts = line.split("|")
                     if len(parts) >= 6:
                         level_num = int(parts[0])
-                        difficulty = parts[2]
-                        level_name = parts[1]
+                        difficulty = parts[1]
+                        level_name = parts[2]
                         level_task = parts[3]
                         level_answer = parts[4].lower()
                         level_hint = parts[5]
@@ -591,7 +591,7 @@ screen scrollable_page():
                                     spacing 30
                                     text f"Задача {i}" size 28 color "#CCFFCC"
                                     text "✓" size 28 color "#00FF00"
-                                    text f"[task_info['name']]" size 24 color "#CCFFCC"
+                                    # text f"[task_info['name']]" size 24 color "#CCFFCC"
                         else:
                             button:
                                 xfill True
@@ -602,7 +602,7 @@ screen scrollable_page():
                                     xalign 0.5
                                     spacing 30
                                     text f"Задача {i}" size 28 color "#FFFFFF"
-                                    text f"[task_info['name']]" size 24 color "#DDDDDD"
+                                    # text f"[task_info['name']]" size 24 color "#DDDDDD"
                     else:
                         button:
                             xfill True
@@ -632,20 +632,20 @@ screen thx():
     
 label freemode_level():
     $ level_num = current_freemode_level
-    $ level_info = freemode_data.get(level_num)
+    $ free_level_info = freemode_data.get(level_num)
     
-    if not level_info:
+    if not free_level_info:
         "Задача не найдена."
         jump freemode_main
     
-    $ diff_color = get_difficulty_color(level_info['difficulty'])
+    $ diff_color = get_difficulty_color(free_level_info['difficulty'])
     
     scene bg map with dissolve
     
-    "=== Свободный режим: [level_info['name']] ==="
-    "Сложность: [level_info['difficulty'].upper()]"
+    "=== Свободный режим: [free_level_info['name']] ==="
+    "Сложность: [free_level_info['difficulty'].upper()]"
     ""
-    "[level_info['task']]"
+    "[free_level_info['task']]"
     ""
     
     menu:
@@ -653,7 +653,7 @@ label freemode_level():
             $ user_answer = renpy.input("Введите ответ:", length=50).strip()
             
             if user_answer:
-                if check_answer(user_answer, level_info['answer']):
+                if check_answer(user_answer, free_level_info['answer']):
                     "Верно! Задача решена!"
                     $ update_freemode_progress(level_num)
                     if level_num < 100:
@@ -681,7 +681,7 @@ label freemode_level():
                 jump freemode_level
 
         "Подсказку мне срочно!!!!":
-            if level_info['hint'] == "":
+            if free_level_info['hint'] == "":
                 "Ну тут можно и без подсказки решить.."
                 "Нет!"
                 "Нет!!"
@@ -691,7 +691,7 @@ label freemode_level():
                 "всё, сами думайте"
                 jump freemode_level
             else:
-                "[level_info['hint']]"
+                "[free_level_info['hint']]"
             jump freemode_level
 
         "Повторить условие":

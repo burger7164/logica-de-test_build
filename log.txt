@@ -1,29 +1,28 @@
-2026-04-12 17:36:03 UTC
+2026-04-12 18:47:07 UTC
 Windows-10-10.0.19045-SP0
 Ren'Py 8.5.2.26010301
 
-Early init took 47 ms
-Loading error handling took 139 ms
-Loading script took 962 ms
-Loading save slot metadata took 27 ms
+Early init took 46 ms
+Loading error handling took 22 ms
+Loading script took 99 ms
+Loading save slot metadata took 29 ms
 Loading persistent took 0 ms
-Running init code took 111 ms
-Loading analysis data took 0 ms
-Analyze and compile ATL took 3 ms
+Running init code took 42 ms
+Loading analysis data took 3 ms
+Analyze and compile ATL took 1 ms
 Reloading save slot metadata took 17 ms
-Backing up script files to 'C:\\Users\\venya\\AppData\\Roaming/RenPy/backups\\Logica-DE-test_build':
-Dump and make backups took 42 ms
+Dump and make backups took 37 ms
 Cleaning cache took 0 ms
-Making clean stores took 0 ms
+Making clean stores took 1 ms
 Initial gc took 46 ms
 DPI scale factor: 1.000000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object took 426 ms
+Creating interface object took 316 ms
 Init translation took 0 ms
 Cleaning stores took 0 ms
-Load screen analysis took 0 ms
-Analyze screens took 33 ms
-Save screen analysis took 11 ms
-Save pyanalysis took 4 ms
-Save bytecode took 25 ms
+Load screen analysis took 19 ms
+Analyze screens took 1 ms
+Save screen analysis took 0 ms
+Save pyanalysis took 0 ms
+Save bytecode took 0 ms
