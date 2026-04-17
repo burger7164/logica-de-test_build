@@ -45,6 +45,8 @@ screen shake_screen(text_obj, shake_power):
         xalign 0.5
         yalign 0.5
 
+#       Main variables
+
 define v = Character("Голос")
 define y = Character("Вы")
 
@@ -60,7 +62,10 @@ default freemode_data = {}
 default freemode_completed = {}
 default current_freemode_level = 1
 
+#       !!Load fuctions!!
+
 init python:
+    import json
     def freemode_levels():
         nya_levels = {} # :3
         try:
@@ -78,6 +83,7 @@ init python:
                         level_task = parts[3]
                         level_answer = parts[4].lower()
                         level_hint = parts[5]
+                        
                         
                         nya_levels[level_num] = {
                             "number": level_num,
@@ -141,7 +147,7 @@ init python:
                     line = line.decode('utf-8').strip()
                     if not line or line.startswith("#"):
                         continue
-                    
+
                     parts = line.split("|")
                     if len(parts) >= 6:
                         level_num = int(parts[0])
@@ -150,7 +156,18 @@ init python:
                         level_task = parts[3]
                         level_answer = parts[4].lower()
                         level_hint = parts[5]
-                        
+
+                        if len(parts) > 6:
+                            interaction = parts[6]
+                        else:
+                            interaction = "text"
+                        extra_data = {}
+                        if len(parts) > 7:
+                            try:
+                                extra_data = json.loads(parts[7])
+                            except:
+                                extra_data = {}
+
                         levels[level_num] = {
                             "number": level_num,
                             "difficulty": difficulty,
@@ -158,9 +175,12 @@ init python:
                             "task": level_task,
                             "answer": level_answer,
                             "hint": level_hint,
-                            "completed": False
+                            "completed": False,
+                            "interaction": interaction,
+                            "extra": extra_data
                         }
         except:
+            renpy.say(None, "Ошибка загрузки уровней: {}".format(e))
             for i in range(1, 26):
                 if i <= 9:
                     diff = "e"
@@ -186,6 +206,27 @@ init python:
                 }
         
         return levels
+
+    def resolve_interaction(level_info):
+        interaction = level_info.get("interaction", "text")
+        extra = level_info.get("extra", {})
+        task = level_info.get("task", "")
+
+        if interaction == "text":
+            return renpy.input("Ваш ответ:", length=50).strip()
+            
+        elif interaction == "choice":
+            options = extra.get("options", ["Да", "Нет"])
+            return renpy.call_screen("puzzle_choice", task_text=task, options=options)
+            
+        elif interaction == "drag":
+            items = extra.get("items", [])
+            hint = extra.get("order_hint", "")
+            return renpy.call_screen("puzzle_drag", task_text=task, items=items, hint=hint)
+            
+        else:
+            # Фоллбэк на текстовый ввод для неизвестных типов
+            return renpy.input("Ваш ответ:", length=50).strip()
     
     def get_difficulty_color(difficulty):
         if difficulty == "e":
@@ -246,6 +287,8 @@ init python:
         if level_num in freemode_data:
             freemode_data[level_num]["completed"] = True
             store.freemode_completed[level_num] = True
+
+#       !!Here the game starts, all labels are below this line!!
 
 label start:
     play music "menu.mp3"
@@ -464,62 +507,51 @@ label game_over_hints:
 
 label level_generic:
     $ level_num = current_level
-    
     $ level_info = levels_data.get(level_num)
     if not level_info:
-        $ level_info = {"name": f"Уровень {level_num}", "task": "Задача не найдена", "difficulty": "m", "answer": "0", "hint": "Нет подсказки"}
-    
+        $ level_info = {"name": f"Уровень {level_num}", "task": "Задача не найдена", "difficulty": "m", "answer": "0", "hint": "Нет подсказки", "interaction": "text", "extra": {}}
+        
     $ diff_text = get_difficulty_text(level_num)
     $ scene_img = get_level_scene(level_num)
-    
     if not renpy.has_image(scene_img):
         $ scene_img = "bg puzzle_room"
-    
+        
     scene expression scene_img with dissolve
     
     "=== [level_info['name']] ==="
     "Сложность: [diff_text]"
-    "Кто знает, сколько ещё вы протянете..."
-    ""
-    
-    $ task_text = level_info['task']
-    "[task_text]"
+    "[level_info['task']]"
     
     menu:
         "Ваши действия:"
-        
         "Попытаться решить":
-            $ user_answer = renpy.input("Ваш ответ:", length=50).strip()
+            window hide 
+            $ user_answer = resolve_interaction(level_info)
             if user_answer:
                 if check_answer(user_answer, level_info['answer']):
                     "Верно! Головоломка решена!"
                     $ update_level_progress(level_num)
+                    call screen level_selection
                 else:
                     "Неверно. Попробуйте еще раз или используйте подсказку."
-                    jump level_generic
             else:
-                "Скрижали что-то не нравится, попробуйте ответить ;)"
-                jump level_generic
+                "Вы отменили ввод."
+            jump level_generic
             
         "Использовать подсказку":
             if hints_used >= max_hints:
                 "Вы использовали слишком много подсказок!"
-                "Ваши силы иссякли..."
                 jump game_over_hints
             else:
                 $ hints_used += 1
-                if level_info['hint'] == "":
-                    $ hint_text = random.choice(hints_pool)
-                    "[hint_text]"
-                else:
-                    "[level_info['hint']]"
-                jump level_generic
-        
+                $ hint_text = level_info['hint'] if level_info['hint'] else random.choice(hints_pool)
+                "[hint_text]"
+            jump level_generic
+            
         "Вернуться":
             "Вы возвращаетесь в начальную комнату.."
-    
-    call screen level_selection
-    return
+            call screen level_selection
+            return
 
 label win():
     play sound "door.wav"
@@ -591,7 +623,7 @@ screen scrollable_page():
                                     spacing 30
                                     text f"Задача {i}" size 28 color "#CCFFCC"
                                     text "✓" size 28 color "#00FF00"
-                                    # text f"[task_info['name']]" size 24 color "#CCFFCC"
+                                    text f"[task_info['difficulty']]" size 24 color "#CCFFCC"
                         else:
                             button:
                                 xfill True
@@ -602,7 +634,7 @@ screen scrollable_page():
                                     xalign 0.5
                                     spacing 30
                                     text f"Задача {i}" size 28 color "#FFFFFF"
-                                    # text f"[task_info['name']]" size 24 color "#DDDDDD"
+                                    text f"[task_info['difficulty']]" size 24 color "#DDDDDD"
                     else:
                         button:
                             xfill True
@@ -642,8 +674,14 @@ label freemode_level():
     
     scene bg map with dissolve
     
-    "=== Свободный режим: [free_level_info['name']] ==="
-    "Сложность: [free_level_info['difficulty'].upper()]"
+    "[free_level_info['name']]"
+    if free_level_info['difficulty'] == "e":
+        "Лёгкая"
+    if free_level_info['difficulty'] == "m":
+        "Нормальная"
+    else:
+        "Сложная"
+    
     ""
     "[free_level_info['task']]"
     ""

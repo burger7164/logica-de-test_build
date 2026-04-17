@@ -1,1 +1,10 @@
-﻿
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/interactions.rpy", line 1: expected statement.
+    renpy.hide_window()
+                       ^
+
+Ren'Py Version: Ren'Py 8.5.2.26010301
+Fri Apr 17 19:48:20 2026
