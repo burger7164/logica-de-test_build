@@ -1,41 +1,29 @@
-2026-04-20 21:22:39 UTC
+2026-04-20 22:14:13 UTC
 Windows-10-10.0.19045-SP0
 Ren'Py 8.5.2.26010301
 
-Early init took 50 ms
-Loading error handling took 23 ms
-Loading script took 110 ms
-Loading save slot metadata took 23 ms
+Early init took 47 ms
+Loading error handling took 144 ms
+Loading script took 1331 ms
+Loading save slot metadata took 27 ms
 Loading persistent took 0 ms
-Running init code took 46 ms
-Loading analysis data took 6 ms
-Analyze and compile ATL took 1 ms
+Running init code took 169 ms
+Loading analysis data took 0 ms
+Analyze and compile ATL took 3 ms
 Reloading save slot metadata took 15 ms
-Dump and make backups took 39 ms
+Backing up script files to 'C:\\Users\\venya\\AppData\\Roaming/RenPy/backups\\Logica-DE-test_build':
+Dump and make backups took 40 ms
 Cleaning cache took 0 ms
 Making clean stores took 0 ms
-Initial gc took 43 ms
+Initial gc took 35 ms
 DPI scale factor: 1.000000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object took 439 ms
+Creating interface object took 287 ms
 Init translation took 0 ms
 Cleaning stores took 0 ms
-Load screen analysis took 40 ms
-Analyze screens took 1 ms
-Save screen analysis took 0 ms
-Save pyanalysis took 0 ms
+Load screen analysis took 0 ms
+Analyze screens took 27 ms
+Save screen analysis took 13 ms
+Save pyanalysis took 4 ms
 Save bytecode took 0 ms
-Running _start took 2 ms
-Interface start took 306 ms
-
-Initializing gl2 renderer:
-primary display bounds: (0, 0, 1920, 1080)
-swap interval: 1 frames
-Windowed mode.
-Vendor: 'NVIDIA Corporation'
-Renderer: 'NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2'
-Version: '4.6.0 NVIDIA 560.94'
-Display Info: <Info({'bitsize': 32, 'bytesize': 4, 'masks': (16711680, 65280, 255, 0), 'shifts': (16, 8, 0, 0), 'losses': (0, 0, 0, 8), 'current_w': 1920, 'current_h': 1080, 'refresh_rate': 60, 'hw': False, 'wm': True, 'video_mem': 268435456, 'blit_hw': False, 'blit_hw_CC': False, 'blit_hw_A': False, 'blit_sw': False, 'blit_sw_CC': False, 'blit_sw_A': False})>
-Screen sizes: virtual=(1920, 1080) physical=(1739, 978) drawable=(1739, 978)
-Maximum texture size: 4096x4096

@@ -165,12 +165,12 @@ screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
                 xalign 0.5
                 outlines [(1, "#000", 0, 0)]
             
-            if hint:
-                text hint:
-                    size 26
-                    color "#aaa"
-                    xalign 0.5
-                    italic True
+            # if hint:
+            #     text hint:
+            #         size 26
+            #         color "#aaa"
+            #         xalign 0.5
+            #         italic True
             
             null height 20
             
