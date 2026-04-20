@@ -83,8 +83,18 @@ init python:
                         level_task = parts[3]
                         level_answer = parts[4].lower()
                         level_hint = parts[5]
-                        
-                        
+
+                        if len(parts) > 6:
+                            interaction = parts[6]
+                        else:
+                            interaction = "text"
+                        extra_data = {}
+                        if len(parts) > 7:
+                            try:
+                                extra_data = json.loads(parts[7])
+                            except:
+                                extra_data = {}
+
                         nya_levels[level_num] = {
                             "number": level_num,
                             "difficulty": difficulty,
@@ -92,7 +102,9 @@ init python:
                             "task": level_task,
                             "answer": level_answer,
                             "hint": level_hint,
-                            "completed": False
+                            "completed": False,
+                            "interaction": interaction,
+                            "extra": extra_data
                         }
         except:
             for i in range(1, 101):
@@ -218,6 +230,22 @@ init python:
         elif interaction == "choice":
             options = extra.get("options", ["Да", "Нет"])
             return renpy.call_screen("puzzle_choice", task_text=task, options=options)
+        
+        elif interaction == "choice_order":
+            items = extra.get("items", [])
+            hint = level_info.get("hint", "")
+            return renpy.call_screen("puzzle_order", task_text=task, items=items, hint=hint)
+        
+        elif interaction == "slider":
+            min_val = extra.get("min", 0)
+            max_val = extra.get("max", 100)
+            hint = level_info.get("hint", "")
+            return renpy.call_screen("puzzle_slider", task_text=task, min_val=min_val, max_val=max_val, hint=hint)
+        
+        elif interaction == "memory":  # НОВЫЙ ТИП
+            sequence = extra.get("sequence", [])
+            hint = level_info.get("hint", "")
+            return renpy.call_screen("puzzle_memory", task_text=task, sequence=sequence, hint=hint)
             
         elif interaction == "drag":
             items = extra.get("items", [])
@@ -225,7 +253,32 @@ init python:
             return renpy.call_screen("puzzle_drag", task_text=task, items=items, hint=hint)
             
         else:
-            # Фоллбэк на текстовый ввод для неизвестных типов
+            return renpy.input("Ваш ответ:", length=50).strip()
+
+    def resolve_freemode_interaction(level_info):
+        interaction = level_info.get("interaction", "text")
+        extra = level_info.get("extra", {})
+        task = level_info.get("task", "")
+
+        if interaction == "text":
+            return renpy.input("Ваш ответ:", length=50).strip()
+            
+        elif interaction == "choice":
+            options = extra.get("options", ["Да", "Нет"])
+            return renpy.call_screen("puzzle_choice", task_text=task, options=options)
+        
+        elif interaction == "choice_order":
+            items = extra.get("items", [])
+            hint = level_info.get("hint", "")
+            return renpy.call_screen("puzzle_order", task_text=task, items=items, hint=hint)
+        
+        elif interaction == "slider":
+            min_val = extra.get("min", 0)
+            max_val = extra.get("max", 100)
+            hint = level_info.get("hint", "")
+            return renpy.call_screen("puzzle_slider", task_text=task, min_val=min_val, max_val=max_val, hint=hint)
+        
+        else:
             return renpy.input("Ваш ответ:", length=50).strip()
     
     def get_difficulty_color(difficulty):
@@ -245,7 +298,7 @@ init python:
             return "bg puzzle_room_hard"
     
     def get_difficulty_text(level_num):
-        if level_num <= 9:
+        if level_num < 8:
             return "Легкий"
         elif level_num <= 19:
             return "Средний"
@@ -520,7 +573,9 @@ label level_generic:
     
     "=== [level_info['name']] ==="
     "Сложность: [diff_text]"
-    "[level_info['task']]"
+    
+    if level_info.get("interaction", "text") == "text":
+        "[level_info['task']]"
     
     menu:
         "Ваши действия:"
@@ -611,6 +666,13 @@ screen scrollable_page():
                     $ task_info = freemode_data.get(i)
                     if task_info:
                         $ is_done = freemode_completed.get(i, False)
+                        $ diff = task_info.get('difficulty', 'm')
+                        $ diff_color = "#00FF00" if diff == "e" else "#FFAA00" if diff == "m" else "#FF4444"
+                        $ diff_text = "★" if diff == "e" else "★★" if diff == "m" else "★★★"
+                        
+                        # Иконка типа задачи
+                        $ interaction = task_info.get('interaction', 'text')
+                        $ type_icon = "⌨️" if interaction == "text" else "🔘" if interaction == "choice" else "📋" if interaction == "choice_order" else "🎚️"
                         
                         if is_done:
                             button:
@@ -621,9 +683,9 @@ screen scrollable_page():
                                 hbox:
                                     xalign 0.5
                                     spacing 30
-                                    text f"Задача {i}" size 28 color "#CCFFCC"
+                                    text f"{type_icon} Задача {i}" size 28 color "#CCFFCC"
                                     text "✓" size 28 color "#00FF00"
-                                    text f"[task_info['difficulty']]" size 24 color "#CCFFCC"
+                                    text diff_text size 24 color diff_color
                         else:
                             button:
                                 xfill True
@@ -633,16 +695,17 @@ screen scrollable_page():
                                 hbox:
                                     xalign 0.5
                                     spacing 30
-                                    text f"Задача {i}" size 28 color "#FFFFFF"
-                                    text f"[task_info['difficulty']]" size 24 color "#DDDDDD"
+                                    text f"{type_icon} Задача {i}" size 28 color "#FFFFFF"
+                                    text diff_text size 24 color diff_color
                     else:
                         button:
                             xfill True
                             background Solid("#444444")
                             action NullAction()
-                            text f"Задача {i} (недоступна)" size 24 color "#888888" xalign 0.5
+                            text f"❓ Задача {i} (недоступна)" size 24 color "#888888" xalign 0.5
                 
                 text "----------" xalign 0.5
+                text "⌨️ - ввод текста  🔘 - выбор  📋 - порядок  🎚️ - ползунок" size 18 color "#aaa" xalign 0.5
                 null height 20
                 
                 textbutton ">:)" action Jump("thxs") xalign 0.5
@@ -670,26 +733,20 @@ label freemode_level():
         "Задача не найдена."
         jump freemode_main
     
-    $ diff_color = get_difficulty_color(free_level_info['difficulty'])
-    
     scene bg map with dissolve
     
     "[free_level_info['name']]"
-    if free_level_info['difficulty'] == "e":
-        "Лёгкая"
-    if free_level_info['difficulty'] == "m":
-        "Нормальная"
-    else:
-        "Сложная"
-    
     ""
-    "[free_level_info['task']]"
+    
+    # Показываем задание только для текстового ввода
+    if free_level_info.get("interaction", "text") == "text":
+        "[free_level_info['task']]"
     ""
     
     menu:
-        "Ввести ответ":
-            $ user_answer = renpy.input("Введите ответ:", length=50).strip()
-            
+        "Попытаться решить":
+            window hide
+            $ user_answer = resolve_freemode_interaction(free_level_info)
             if user_answer:
                 if check_answer(user_answer, free_level_info['answer']):
                     "Верно! Задача решена!"
@@ -707,7 +764,7 @@ label freemode_level():
                         "Поздравляю! Вы решили последнюю задачу в свободном режиме!"
                         jump freemode_main
                 else:
-                    "Неверный ответ. Попробуйте еще раз или вернитесь к списку."
+                    "Неверный ответ. Попробуйте еще раз или используйте подсказку."
                     menu:
                         "Что дальше?"
                         "Попробовать снова":
@@ -715,21 +772,15 @@ label freemode_level():
                         "Вернуться к списку задач":
                             jump freemode_main
             else:
-                "Вы не ввели ответ."
+                "Вы отменили ввод."
                 jump freemode_level
 
-        "Подсказку мне срочно!!!!":
-            if free_level_info['hint'] == "":
-                "Ну тут можно и без подсказки решить.."
-                "Нет!"
-                "Нет!!"
-                "Нет!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                "Да не лень мне все их писать было -_-"
-                "Это всё deepseek :c"
-                "всё, сами думайте"
-                jump freemode_level
+        "Использовать подсказку":
+            $ hint_text = free_level_info.get('hint', '')
+            if hint_text == "":
+                "Подсказка отсутствует. Попробуйте подумать ещё!"
             else:
-                "[free_level_info['hint']]"
+                "[hint_text]"
             jump freemode_level
 
         "Повторить условие":
