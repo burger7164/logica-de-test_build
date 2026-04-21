@@ -10,5 +10,5 @@ Consists of 25 logical and mathematical problems, which increase in difficulty a
 - **Freeplay mode** <br>
 Has an extended bank of 100 problems which difficulty vary from one to other.
 # Installation and launching
-1. Download and unpack the .zip archive from the **Releases** tab linked [here](https://github.com/burger7164/LogicaDE/releases).
+1. Download and unpack the .zip archive from the **Releases** tab linked [here](https://github.com/burger7164/Logica-DE-test_build/releases/tag/renpy).
 2. Afterwards, go into the created folder and launch the **LogicaDE.exe** file to launch the game.
