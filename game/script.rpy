@@ -265,19 +265,19 @@ init python:
             
         elif interaction == "choice":
             options = extra.get("options", ["Да", "Нет"])
-            return renpy.call_screen("puzzle_choice", task_text=task, options=options)
+            return renpy.call_screen("puzzle_choice", task_text=task, options=options, return_label="leave_freemode")
         
         elif interaction == "choice_order":
             items = extra.get("items", [])
             hint = level_info.get("hint", "")
-            return renpy.call_screen("puzzle_order", task_text=task, items=items, hint=hint)
+            return renpy.call_screen("puzzle_order", task_text=task, items=items, hint=hint, return_label="leave_freemode")
         
         elif interaction == "slider":
             min_val = extra.get("min", 0)
             max_val = extra.get("max", 100)
             hint = level_info.get("hint", "")
-            return renpy.call_screen("puzzle_slider", task_text=task, min_val=min_val, max_val=max_val, hint=hint)
-        
+            return renpy.call_screen("puzzle_slider", task_text=task, min_val=min_val, max_val=max_val, hint=hint, return_label="leave_freemode")
+            
         else:
             return renpy.input("Ваш ответ:", length=50).strip()
     

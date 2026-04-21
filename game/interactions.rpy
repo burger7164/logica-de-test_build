@@ -13,7 +13,12 @@ label leave_lvl:
         Return("")
     jump level_generic
 
-screen puzzle_choice(task_text="", options=None):
+label leave_freemode:
+    init python:
+        Return("")
+    jump freemode_level
+
+screen puzzle_choice(task_text="", options=None, return_label="leave_lvl"):
     tag menu
     if options is None:
         $ options = ["Да", "Нет"]
@@ -41,11 +46,11 @@ screen puzzle_choice(task_text="", options=None):
                         size 35
                         hover_color "#7e4525"
 
-            text "\n{a=jump:leave_lvl}Отмена{/a}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5
+            text "\n{a=jump:[return_label]}Отмена{/a}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5
 
 # ============== Порядок ==============
 
-screen puzzle_order(task_text="", items=None, hint=""):
+screen puzzle_order(task_text="", items=None, hint="", return_label="leave_lvl"):
     default selected_order = []
     default available_items = list(items) if items else []
     
@@ -132,7 +137,7 @@ screen puzzle_order(task_text="", items=None, hint=""):
                         hover_color "#7e4525"
                     action Return(",".join(selected_order))
 
-            text "\n{a=jump:leave_lvl}Отмена{/a}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5                
+            text "\n{a=jump:[return_label]}Отмена{/a}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5                
 
 init python:
     def AddToSet(lst, item):
@@ -148,7 +153,7 @@ init python:
 
 
 # ========== SLIDER ==========
-screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
+screen puzzle_slider(task_text="", min_val=0, max_val=100, hint="", return_label="leave_lvl"):
     default current_value = (min_val + max_val) // 2
     
     frame:
@@ -187,7 +192,6 @@ screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
                         spacing 10
                         xalign 0.5
                         
-                        # МИНУС
                         button:
                             xsize 80 ysize 80
                             background None
@@ -221,7 +225,6 @@ screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
                                 hover_color "#7e4525"
                             action If(current_value <= max_val and current_value >= min_val and current_value - 1 >= min_val, SetScreenVariable("current_value", current_value - 1))
                         
-                        # Текущее значение
                         text "[current_value]":
                             size 64
                             xalign 0.5
@@ -231,7 +234,6 @@ screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
                             xminimum 150
                             text_align 0.5
                         
-                        # ПЛЮС
                         button:
                             xsize 40 ysize 50
                             background None
@@ -278,7 +280,6 @@ screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
                             left_bar "#3c1f14"
                             right_bar "#7e4525"
                         
-                        # Маркер
                         if max_val != min_val:
                             $ percent = (current_value - min_val) / (max_val - min_val)
                             $ marker_x = percent * 400
@@ -318,6 +319,4 @@ screen puzzle_slider(task_text="", min_val=0, max_val=100, hint=""):
                         hover_color "#7e4525"
                     action SetScreenVariable("current_value", (min_val + max_val) // 2)
             
-                text "\n{a=jump:leave_lvl}Отмена{/a}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5
-                
-                
+                text "\n{a=jump:[return_label]}Отмена{/a}" outlines [ (2, "#000000", 0, 0) ] size 35 color "#c49227" xalign 0.5
